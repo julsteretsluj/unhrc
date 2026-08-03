@@ -77,11 +77,12 @@
       '<div class="gate-screen payment-screen udhr-screen" role="dialog" aria-labelledby="gate-title" aria-describedby="gate-desc">' +
       '<h2 id="gate-title">Delegate access</h2>' +
       '<p id="gate-desc" class="payment-desc">Affix the seal to the Universal Declaration of Human Rights.</p>' +
-      '<p class="payment-placeholder-note">Placeholder access gate — will be replaced with the real system later.</p>' +
       '<div class="udhr-scene" data-scene>' +
-      '<img class="udhr-doc" src="assets/gate/udhr.png?v=20260803d" alt="Universal Declaration of Human Rights" draggable="false">' +
+      '<div class="udhr-frame">' +
+      '<img class="udhr-doc" src="assets/gate/udhr.png?v=20260803e" alt="Universal Declaration of Human Rights" draggable="false">' +
       '<button type="button" class="udhr-seal-target" data-seal-target aria-label="Stamp the golden seal circle" aria-pressed="false"></button>' +
-      '<img class="udhr-wax-seal" data-wax-seal src="assets/gate/wax-seal.png?v=20260803d" alt="" draggable="false" hidden>' +
+      '<img class="udhr-wax-seal" data-wax-seal src="assets/gate/wax-seal.png?v=20260803e" alt="" draggable="false" hidden>' +
+      "</div>" +
       "</div>" +
       '<p class="payment-hint" data-pay-hint>Click the golden circle to stamp the seal</p>' +
       '<p class="payment-success" data-pay-success hidden>Sealed. Welcome to UNHRC.</p>' +
