@@ -3329,12 +3329,12 @@ body.payment-open {
   filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.45));
 }
 
-/* Hotspot centered on the golden ring (measured from udhr.png) */
+/* Hotspot = outer diameter of golden ring in udhr.png (1024²) */
 .udhr-seal-target {
   position: absolute;
-  left: 60.64%;
-  top: 79.98%;
-  width: 9.5%;
+  left: 70.67%;
+  top: 76.91%;
+  width: 22.9%;
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
   border: 0;
@@ -3349,9 +3349,10 @@ body.payment-open {
 .udhr-seal-target::after {
   content: "";
   position: absolute;
-  inset: -8%;
+  inset: 0;
+  box-sizing: border-box;
   border-radius: 50%;
-  border: 2px solid rgba(251, 191, 36, 0.45);
+  border: 2px solid rgba(251, 191, 36, 0.55);
   box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.35);
   animation: udhr-pulse 1.6s ease-out infinite;
   pointer-events: none;
@@ -3380,24 +3381,57 @@ body.payment-open {
 
 @keyframes udhr-pulse {
   0% {
-    transform: scale(0.92);
+    transform: scale(1);
     opacity: 0.9;
   }
   70% {
-    transform: scale(1.18);
+    transform: scale(1.08);
     opacity: 0;
   }
   100% {
-    transform: scale(1.18);
+    transform: scale(1.08);
     opacity: 0;
   }
 }
 
+/* Cursor-following seal (fixed to viewport under the pointer) */
+.udhr-screen.is-cursor-seal {
+  cursor: none;
+}
+
+.udhr-screen.is-cursor-seal .payment-skip,
+.udhr-screen.is-cursor-seal .udhr-seal-target {
+  cursor: none;
+}
+
+.udhr-cursor-seal {
+  display: none;
+  position: fixed;
+  left: -9999px;
+  top: -9999px;
+  width: min(4.75rem, 18vw);
+  height: auto;
+  transform: translate(-50%, -50%) rotate(-14deg);
+  opacity: 0;
+  z-index: 260;
+  pointer-events: none;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.55));
+  transition: opacity 0.15s ease;
+}
+
+.udhr-cursor-seal.is-following {
+  display: block;
+}
+
+.udhr-cursor-seal.is-following.is-visible {
+  opacity: 0.95;
+}
+
 .udhr-wax-seal {
   position: absolute;
-  left: 60.64%;
-  top: 79.98%;
-  width: 18%;
+  left: 70.67%;
+  top: 76.91%;
+  width: 22.9%;
   height: auto;
   transform: translate(-50%, -50%) scale(1.35) rotate(-12deg);
   opacity: 0;
@@ -3412,8 +3446,8 @@ body.payment-open {
 
 @keyframes udhr-stamp {
   0% {
-    opacity: 0;
-    transform: translate(-50%, -70%) scale(1.7) rotate(-18deg);
+    opacity: 0.95;
+    transform: translate(-50%, -70%) scale(1.35) rotate(-18deg);
   }
   55% {
     opacity: 1;

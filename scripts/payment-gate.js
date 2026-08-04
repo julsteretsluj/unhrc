@@ -1,6 +1,6 @@
 /**
- * Access gate — UDHR document; click the golden seal circle to stamp.
- * Skip also unlocks. Then reveals the main UNHRC site UI.
+ * Access gate — UDHR document; wax seal follows the cursor until stamped
+ * on the golden circle. Skip also unlocks. Then reveals the main UNHRC site UI.
  */
 (function () {
   var gate = document.getElementById("payment-gate");
@@ -10,6 +10,7 @@
   var unlocked = false;
   var stamped = false;
   var timers = [];
+  var onPointerMove = null;
 
   function clearTimers() {
     timers.forEach(function (id) {
@@ -18,10 +19,18 @@
     timers = [];
   }
 
+  function stopCursorFollow() {
+    if (onPointerMove) {
+      window.removeEventListener("pointermove", onPointerMove);
+      onPointerMove = null;
+    }
+  }
+
   function unlock() {
     if (unlocked) return;
     unlocked = true;
     clearTimers();
+    stopCursorFollow();
     var msg = gate.querySelector("[data-pay-success]");
     if (msg) msg.hidden = false;
     timers.push(
@@ -41,11 +50,19 @@
   function stamp() {
     if (stamped || unlocked) return;
     stamped = true;
+    stopCursorFollow();
 
     var btn = gate.querySelector("[data-seal-target]");
-    var seal = gate.querySelector("[data-wax-seal]");
+    var cursorSeal = gate.querySelector("[data-cursor-seal]");
+    var stampSeal = gate.querySelector("[data-wax-seal]");
     var hint = gate.querySelector("[data-pay-hint]");
+    var screen = gate.querySelector(".udhr-screen");
 
+    if (screen) screen.classList.remove("is-cursor-seal");
+    if (cursorSeal) {
+      cursorSeal.hidden = true;
+      cursorSeal.classList.remove("is-following", "is-visible");
+    }
     if (btn) {
       btn.disabled = true;
       btn.setAttribute("aria-pressed", "true");
@@ -53,12 +70,11 @@
     }
     if (hint) hint.textContent = "Sealing the declaration…";
 
-    if (seal) {
-      seal.hidden = false;
-      // restart animation
-      seal.classList.remove("is-stamping");
-      void seal.offsetWidth;
-      seal.classList.add("is-stamping");
+    if (stampSeal) {
+      stampSeal.hidden = false;
+      stampSeal.classList.remove("is-stamping");
+      void stampSeal.offsetWidth;
+      stampSeal.classList.add("is-stamping");
     }
 
     timers.push(
@@ -69,8 +85,27 @@
     );
   }
 
+  function startCursorFollow(cursorSeal, screen) {
+    stopCursorFollow();
+    if (!cursorSeal || !screen) return;
+
+    cursorSeal.hidden = false;
+    cursorSeal.classList.add("is-following");
+    screen.classList.add("is-cursor-seal");
+
+    onPointerMove = function (e) {
+      if (stamped || unlocked) return;
+      cursorSeal.style.left = e.clientX + "px";
+      cursorSeal.style.top = e.clientY + "px";
+      cursorSeal.classList.add("is-visible");
+    };
+
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+  }
+
   function render() {
     clearTimers();
+    stopCursorFollow();
     stamped = false;
 
     gate.innerHTML =
@@ -87,7 +122,12 @@
       '<p class="payment-hint" data-pay-hint>Click the golden circle to stamp the seal</p>' +
       '<p class="payment-success" data-pay-success hidden>Sealed. Welcome to UNHRC.</p>' +
       '<button type="button" class="payment-skip" data-skip>Skip — enter without stamping</button>' +
+      '<img class="udhr-cursor-seal" data-cursor-seal src="assets/gate/wax-seal.png?v=20260803e" alt="" draggable="false" hidden>' +
       "</div>";
+
+    var cursorSeal = gate.querySelector("[data-cursor-seal]");
+    var screen = gate.querySelector(".udhr-screen");
+    startCursorFollow(cursorSeal, screen);
 
     gate.querySelector("[data-seal-target]").addEventListener("click", stamp);
     gate.querySelector("[data-skip]").addEventListener("click", function () {
